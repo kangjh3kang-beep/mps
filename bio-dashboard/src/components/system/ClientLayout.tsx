@@ -16,6 +16,8 @@ import { KidsModeProvider } from "@/components/accessibility/KidsModeProvider";
 import { MateProvider } from "@/components/mate/MateProvider";
 // i18n (Internationalization) Provider
 import { I18nProvider } from "@/lib/i18n";
+// Observability & Monitoring
+import { MonitoringProvider } from "@/lib/observability";
 
 interface ClientLayoutProps {
   children: React.ReactNode;
@@ -70,30 +72,33 @@ export function ClientLayout({ children }: ClientLayoutProps) {
       <SettingsProvider>
         {/* I18nProvider: 다국어 지원 - 모든 UI 컴포넌트보다 상위에 위치해야 함 */}
         <I18nProvider>
-          <AppToastProvider>
-            <ErrorBoundary
-              onError={(error, errorInfo) => {
-                // 외부 에러 트래킹 서비스로 전송 가능
-                console.error("[ClientLayout] Global error caught:", {
-                  error: error.message,
-                  componentStack: errorInfo.componentStack
-                });
-              }}
-            >
-              {/* 41-Persona Simulation: 접근성 모드 */}
-              <SeniorModeProvider>
-                <KidsModeWrapper>
-                  {/* Manpasik Mate: AI 동반자 시스템 */}
-                  <MateProvider>
-                    {children}
-                  </MateProvider>
-                </KidsModeWrapper>
-              </SeniorModeProvider>
-              <MedicationReminderAgent />
-              <FloatingSystemStatus />
-            </ErrorBoundary>
-            <SystemLockOverlay open={!!locked.locked} reason={locked.reason} />
-          </AppToastProvider>
+          {/* MonitoringProvider: Sentry, PostHog, Live Chat */}
+          <MonitoringProvider>
+            <AppToastProvider>
+              <ErrorBoundary
+                onError={(error, errorInfo) => {
+                  // 외부 에러 트래킹 서비스로 전송 가능
+                  console.error("[ClientLayout] Global error caught:", {
+                    error: error.message,
+                    componentStack: errorInfo.componentStack
+                  });
+                }}
+              >
+                {/* 41-Persona Simulation: 접근성 모드 */}
+                <SeniorModeProvider>
+                  <KidsModeWrapper>
+                    {/* Manpasik Mate: AI 동반자 시스템 */}
+                    <MateProvider>
+                      {children}
+                    </MateProvider>
+                  </KidsModeWrapper>
+                </SeniorModeProvider>
+                <MedicationReminderAgent />
+                <FloatingSystemStatus />
+              </ErrorBoundary>
+              <SystemLockOverlay open={!!locked.locked} reason={locked.reason} />
+            </AppToastProvider>
+          </MonitoringProvider>
         </I18nProvider>
       </SettingsProvider>
     </AuthProvider>
