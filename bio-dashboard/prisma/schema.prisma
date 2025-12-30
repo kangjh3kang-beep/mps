@@ -1,0 +1,488 @@
+// ============================================
+// MANPASIK ENTERPRISE DATABASE SCHEMA
+// PostgreSQL with Row-Level Security (RLS)
+// ============================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============================================
+// ORGANIZATIONS (Multi-Tenancy)
+// ============================================
+
+model Organization {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  tier        OrgTier  @default(FREE)
+  settings    Json?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  users       User[]
+  patients    Patient[]
+  devices     Device[]
+  auditLogs   AuditLog[]
+
+  @@index([slug])
+  @@index([tier])
+}
+
+enum OrgTier {
+  FREE
+  STARTER
+  PROFESSIONAL
+  ENTERPRISE
+}
+
+// ============================================
+// USERS & AUTHENTICATION
+// ============================================
+
+model User {
+  id              String    @id @default(cuid())
+  email           String    @unique
+  emailVerified   DateTime?
+  name            String?
+  image           String?
+  hashedPassword  String?
+  
+  // Multi-tenancy
+  organizationId  String?
+  organization    Organization? @relation(fields: [organizationId], references: [id])
+  
+  // RBAC
+  memberLevel     MemberLevel @default(GUEST)
+  expertType      ExpertType?
+  permissions     String[]
+  
+  // Security
+  mfaEnabled      Boolean  @default(false)
+  mfaSecret       String?
+  lastLoginAt     DateTime?
+  failedLoginAttempts Int  @default(0)
+  lockedUntil     DateTime?
+  
+  // Profile
+  profile         UserProfile?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  accounts        Account[]
+  sessions        Session[]
+  measurements    Measurement[]
+  healthRecords   HealthRecord[]
+  auditLogs       AuditLog[]
+  consents        Consent[]
+  
+  @@index([email])
+  @@index([organizationId])
+  @@index([memberLevel])
+  @@index([createdAt])
+}
+
+enum MemberLevel {
+  GUEST
+  ASSOCIATE
+  MEMBER
+  RESEARCHER
+  EXPERT
+  REGIONAL_ADMIN
+  NATIONAL_ADMIN
+  SUPER_ADMIN
+}
+
+enum ExpertType {
+  GENERAL
+  DOCTOR
+  NURSE
+  PHARMACIST
+  NUTRITIONIST
+  TRAINER
+  RESEARCHER
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([expires])
+}
+
+model UserProfile {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  dateOfBirth     DateTime?
+  gender          String?
+  height          Float?    // cm
+  weight          Float?    // kg
+  bloodType       String?
+  
+  // Health conditions
+  conditions      String[]
+  medications     String[]
+  allergies       String[]
+  
+  // Preferences
+  language        String    @default("ko")
+  timezone        String    @default("Asia/Seoul")
+  theme           String    @default("system")
+  
+  // Emergency contact
+  emergencyName   String?
+  emergencyPhone  String?
+  
+  updatedAt       DateTime  @updatedAt
+}
+
+// ============================================
+// PATIENTS (For Healthcare Providers)
+// ============================================
+
+model Patient {
+  id              String    @id @default(cuid())
+  
+  // Multi-tenancy
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id])
+  
+  // Patient info (encrypted in application layer)
+  encryptedData   String    @db.Text  // AES-256 encrypted PII
+  dataKeyId       String               // Key ID for decryption
+  
+  // Searchable fields (pseudonymized)
+  pseudoId        String    @unique   // For lookups without exposing real ID
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  healthRecords   HealthRecord[]
+  consents        Consent[]
+  
+  @@index([organizationId])
+  @@index([pseudoId])
+  @@index([createdAt])
+}
+
+// ============================================
+// HEALTH RECORDS & MEASUREMENTS
+// ============================================
+
+model Measurement {
+  id                String    @id @default(cuid())
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Measurement data
+  type              MeasurementType
+  rawVoltage        Float[]
+  temperature       Float?
+  concentrationMmolL Float
+  healthScore       Float?
+  
+  // Calibration
+  calibrationId     String?
+  calibration       Calibration? @relation(fields: [calibrationId], references: [id])
+  
+  // AI Analysis
+  aiPrediction      Json?
+  aiConfidence      Float?
+  
+  // Metadata
+  deviceId          String?
+  cartridgeId       String?
+  cartridgeLot      String?
+  
+  createdAt         DateTime  @default(now())
+  
+  @@index([userId])
+  @@index([type])
+  @@index([createdAt])
+  @@index([userId, createdAt])  // Composite for time-series queries
+}
+
+enum MeasurementType {
+  GLUCOSE
+  LACTATE
+  KETONE
+  CORTISOL
+  URIC_ACID
+  CHOLESTEROL
+  HBA1C
+}
+
+model HealthRecord {
+  id              String    @id @default(cuid())
+  
+  // Ownership
+  userId          String?
+  user            User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  patientId       String?
+  patient         Patient?  @relation(fields: [patientId], references: [id])
+  
+  // Multi-tenancy
+  organizationId  String?
+  
+  // Record data (encrypted)
+  type            RecordType
+  encryptedData   String    @db.Text
+  dataKeyId       String
+  
+  // Metadata (searchable)
+  recordDate      DateTime
+  providerName    String?
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([userId])
+  @@index([patientId])
+  @@index([organizationId])
+  @@index([type])
+  @@index([recordDate])
+}
+
+enum RecordType {
+  LAB_RESULT
+  PRESCRIPTION
+  DIAGNOSIS
+  IMAGING
+  VACCINATION
+  ALLERGY
+  PROCEDURE
+  NOTE
+}
+
+// ============================================
+// DEVICES & CALIBRATION
+// ============================================
+
+model Device {
+  id              String    @id @default(cuid())
+  
+  // Ownership
+  organizationId  String?
+  organization    Organization? @relation(fields: [organizationId], references: [id])
+  
+  // Device info
+  serialNumber    String    @unique
+  model           String
+  firmwareVersion String?
+  
+  // Status
+  status          DeviceStatus @default(ACTIVE)
+  lastSeenAt      DateTime?
+  
+  // Security
+  secretHash      String    // Hashed device secret
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  calibrations    Calibration[]
+  
+  @@index([serialNumber])
+  @@index([organizationId])
+  @@index([status])
+}
+
+enum DeviceStatus {
+  ACTIVE
+  INACTIVE
+  MAINTENANCE
+  RETIRED
+}
+
+model Calibration {
+  id              String    @id @default(cuid())
+  
+  deviceId        String
+  device          Device    @relation(fields: [deviceId], references: [id])
+  
+  // Calibration parameters
+  slope           Float
+  intercept       Float
+  rSquared        Float?
+  
+  // Validity
+  validFrom       DateTime  @default(now())
+  validUntil      DateTime?
+  
+  measurements    Measurement[]
+  
+  @@index([deviceId])
+  @@index([validFrom])
+}
+
+// ============================================
+// CONSENT MANAGEMENT (GDPR/HIPAA)
+// ============================================
+
+model Consent {
+  id              String    @id @default(cuid())
+  
+  userId          String?
+  user            User?     @relation(fields: [userId], references: [id])
+  
+  patientId       String?
+  patient         Patient?  @relation(fields: [patientId], references: [id])
+  
+  // Consent details
+  type            ConsentType
+  purpose         String
+  grantedAt       DateTime  @default(now())
+  revokedAt       DateTime?
+  expiresAt       DateTime?
+  
+  // Audit
+  ipAddress       String?
+  userAgent       String?
+  
+  @@index([userId])
+  @@index([patientId])
+  @@index([type])
+  @@index([grantedAt])
+}
+
+enum ConsentType {
+  DATA_PROCESSING
+  MARKETING
+  RESEARCH
+  DATA_SHARING
+  TELEMEDICINE
+}
+
+// ============================================
+// AUDIT LOG (Immutable)
+// ============================================
+
+model AuditLog {
+  id              String    @id @default(cuid())
+  
+  // Actor
+  userId          String?
+  user            User?     @relation(fields: [userId], references: [id])
+  
+  // Multi-tenancy
+  organizationId  String?
+  organization    Organization? @relation(fields: [organizationId], references: [id])
+  
+  // Event details
+  action          String
+  category        AuditCategory
+  severity        AuditSeverity @default(INFO)
+  
+  // Target
+  resourceType    String?
+  resourceId      String?
+  
+  // Context
+  ipAddress       String?
+  userAgent       String?
+  requestId       String?
+  
+  // Changes (for data modifications)
+  changes         Json?
+  
+  // Hash chain for integrity
+  previousHash    String?
+  hash            String
+  
+  timestamp       DateTime  @default(now())
+  
+  @@index([userId])
+  @@index([organizationId])
+  @@index([action])
+  @@index([category])
+  @@index([timestamp])
+  @@index([resourceType, resourceId])
+}
+
+enum AuditCategory {
+  AUTHENTICATION
+  AUTHORIZATION
+  DATA_ACCESS
+  DATA_MODIFICATION
+  DATA_EXPORT
+  SYSTEM
+  SECURITY
+  COMPLIANCE
+}
+
+enum AuditSeverity {
+  DEBUG
+  INFO
+  WARNING
+  ERROR
+  CRITICAL
+}
+
+// ============================================
+// NOTIFICATIONS
+// ============================================
+
+model Notification {
+  id              String    @id @default(cuid())
+  userId          String
+  
+  type            NotificationType
+  title           String
+  body            String
+  data            Json?
+  
+  read            Boolean   @default(false)
+  readAt          DateTime?
+  
+  createdAt       DateTime  @default(now())
+  
+  @@index([userId])
+  @@index([read])
+  @@index([createdAt])
+}
+
+enum NotificationType {
+  MEASUREMENT_REMINDER
+  HEALTH_ALERT
+  APPOINTMENT
+  SYSTEM
+  PROMOTIONAL
+}
+
+

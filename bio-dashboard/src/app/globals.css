@@ -1,0 +1,564 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+ * 만파식 (Manpasik) Design System
+ * 한지 (Hanji) + 수묵화 (Ink Painting) + 단청 (Dancheong)
+ * Korean Traditional Aesthetics for Modern Health AI
+ * ============================================ */
+
+/* Noto Sans KR + Inter for Korean Typography */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* ============================================
+ * CSS Custom Properties (Light Theme - 화선지 Light Mode)
+ * ============================================ */
+@layer base {
+  :root {
+    /* 만파식 화선지 (Hanji Paper) Light Mode */
+    --background: oklch(0.965 0.01 75);
+    --foreground: oklch(0.18 0.015 260);
+  
+    /* 카드 색상을 배경과 더 구분되게 밝게 조정 */
+    --card: oklch(0.995 0.003 75);
+    --card-foreground: oklch(0.18 0.015 260);
+  
+    --popover: oklch(0.99 0.004 75);
+    --popover-foreground: oklch(0.18 0.015 260);
+  
+    /* 먹색 (Ink Black) */
+    --primary: oklch(0.22 0.015 260);
+    --primary-foreground: oklch(0.97 0.008 75);
+  
+    /* 연먹 (Light Ink Wash) */
+    --secondary: oklch(0.93 0.008 260);
+    --secondary-foreground: oklch(0.28 0.015 260);
+  
+    --muted: oklch(0.94 0.006 75);
+    --muted-foreground: oklch(0.48 0.015 260);
+  
+    /* 단청 적색 (Dancheong Red) */
+    --accent: oklch(0.55 0.17 25);
+    --accent-foreground: oklch(0.98 0.008 75);
+  
+    --destructive: oklch(0.48 0.2 25);
+    --destructive-foreground: oklch(0.98 0.008 75);
+  
+    --border: oklch(0.88 0.01 75);
+    --input: oklch(0.94 0.006 75);
+    --ring: oklch(0.22 0.015 260);
+  
+    /* 오방색 (Korean Five Colors) */
+    --chart-1: oklch(0.22 0.015 260);
+    --chart-2: oklch(0.55 0.17 25);
+    --chart-3: oklch(0.52 0.12 245);
+    --chart-4: oklch(0.75 0.13 90);
+    --chart-5: oklch(0.52 0.12 160);
+  
+    /* 수묵화 컬러 (Ink Painting Colors) */
+    --ink: oklch(0.22 0.015 260);
+    --ink-light: oklch(0.42 0.015 260);
+    --ink-wash: oklch(0.68 0.012 260);
+    --ink-mist: oklch(0.84 0.008 260);
+    --dancheong-red: oklch(0.55 0.17 25);
+    --dancheong-blue: oklch(0.52 0.12 245);
+    --dancheong-green: oklch(0.52 0.12 160);
+    --dancheong-yellow: oklch(0.75 0.13 90);
+    --hanji: oklch(0.975 0.008 75);
+    --hanji-warm: oklch(0.96 0.012 70);
+  
+    --radius: 0.75rem;
+  
+    --sidebar: oklch(0.985 0.006 75);
+    --sidebar-foreground: oklch(0.22 0.015 260);
+    --sidebar-primary: oklch(0.55 0.17 25);
+    --sidebar-primary-foreground: oklch(0.98 0 0);
+    --sidebar-accent: oklch(0.93 0.008 75);
+    --sidebar-accent-foreground: oklch(0.22 0.015 260);
+    --sidebar-border: oklch(0.9 0.008 75);
+    --sidebar-ring: oklch(0.55 0.17 25);
+  }
+  
+  /* 어두운 테마 패널 구분 강화 - 투명한 화선지 느낌 */
+  .dark {
+    /* 배경: 깊은 먹색 */
+    --background: oklch(0.13 0.008 270);
+    --foreground: oklch(0.9 0.005 70);
+  
+    /* 카드: 배경보다 확실히 밝은 반투명 화선지 느낌 */
+    --card: oklch(0.22 0.006 270);
+    --card-foreground: oklch(0.92 0.005 70);
+  
+    --popover: oklch(0.2 0.006 270);
+    --popover-foreground: oklch(0.9 0.005 70);
+  
+    /* 달빛처럼 부드러운 화선지색 */
+    --primary: oklch(0.88 0.006 70);
+    --primary-foreground: oklch(0.13 0.008 270);
+  
+    /* 은은한 회색 (연먹) */
+    --secondary: oklch(0.28 0.005 270);
+    --secondary-foreground: oklch(0.82 0.005 70);
+  
+    /* 뮤트: 은은하고 읽기 쉬운 톤 */
+    --muted: oklch(0.25 0.004 270);
+    --muted-foreground: oklch(0.68 0.005 70);
+  
+    /* 단청 적색 - 은은하게 */
+    --accent: oklch(0.6 0.13 25);
+    --accent-foreground: oklch(0.96 0.005 70);
+  
+    --destructive: oklch(0.55 0.14 25);
+    --destructive-foreground: oklch(0.96 0.005 70);
+  
+    /* 테두리: 더 뚜렷하게 */
+    --border: oklch(0.32 0.006 270);
+    --input: oklch(0.25 0.004 270);
+    --ring: oklch(0.78 0.005 70);
+  
+    /* 오방색 (밤 버전 - 채도 낮춤) */
+    --chart-1: oklch(0.85 0.005 70);
+    --chart-2: oklch(0.6 0.11 25);
+    --chart-3: oklch(0.58 0.09 245);
+    --chart-4: oklch(0.74 0.09 90);
+    --chart-5: oklch(0.58 0.09 160);
+  
+    /* 수묵화 컬러 (밤 버전 - 은은하게) */
+    --ink: oklch(0.85 0.005 70);
+    --ink-light: oklch(0.68 0.005 70);
+    --ink-wash: oklch(0.42 0.004 270);
+    --ink-mist: oklch(0.32 0.004 270);
+    --hanji: oklch(0.13 0.008 270);
+    --hanji-warm: oklch(0.18 0.01 270);
+  
+    /* 사이드바: 살짝 다른 톤으로 구분 */
+    --sidebar: oklch(0.11 0.008 270);
+    --sidebar-foreground: oklch(0.85 0.005 70);
+    --sidebar-primary: oklch(0.6 0.11 25);
+    --sidebar-primary-foreground: oklch(0.96 0 0);
+    --sidebar-accent: oklch(0.2 0.005 270);
+    --sidebar-accent-foreground: oklch(0.85 0.005 70);
+    --sidebar-border: oklch(0.28 0.006 270);
+    --sidebar-ring: oklch(0.6 0.11 25);
+  }
+  
+  @theme inline {
+    --font-sans: var(--font-korean), "Inter", system-ui, sans-serif;
+    --font-mono: "Geist Mono", monospace;
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+    --color-ink: var(--ink);
+    --color-ink-light: var(--ink-light);
+    --color-ink-wash: var(--ink-wash);
+    --color-ink-mist: var(--ink-mist);
+    --color-dancheong-red: var(--dancheong-red);
+    --color-dancheong-blue: var(--dancheong-blue);
+    --color-dancheong-green: var(--dancheong-green);
+    --color-dancheong-yellow: var(--dancheong-yellow);
+    --color-hanji: var(--hanji);
+    --color-hanji-warm: var(--hanji-warm);
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+    --radius-2xl: calc(var(--radius) + 8px);
+    --color-sidebar: var(--sidebar);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+  }
+  
+  @layer base {
+    * {
+      @apply border-border outline-ring/50;
+    }
+    body {
+      @apply bg-background text-foreground;
+    }
+  }
+  
+  /* 먹물 번짐 애니메이션 (Ink Spread Animation) */
+  @keyframes ink-drop {
+    0% {
+      transform: scale(0);
+      opacity: 0;
+    }
+    30% {
+      transform: scale(0.4);
+      opacity: 0.9;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 0.7;
+    }
+  }
+  
+  @keyframes ink-spread {
+    0% {
+      transform: scale(0.3);
+      opacity: 0;
+      filter: blur(8px);
+    }
+    50% {
+      opacity: 0.6;
+      filter: blur(4px);
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+      filter: blur(0);
+    }
+  }
+  
+  @keyframes ink-ripple {
+    0% {
+      transform: scale(0.8);
+      opacity: 0.5;
+    }
+    50% {
+      transform: scale(1.1);
+      opacity: 0.25;
+    }
+    100% {
+      transform: scale(0.8);
+      opacity: 0.5;
+    }
+  }
+  
+  @keyframes gentle-float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-3px);
+    }
+  }
+  
+  @keyframes breathe {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 0.5;
+    }
+    50% {
+      transform: scale(1.03);
+      opacity: 0.7;
+    }
+  }
+  
+  @keyframes flow-inward {
+    0% {
+      stroke-dashoffset: 100;
+      opacity: 0.3;
+    }
+    50% {
+      opacity: 0.7;
+    }
+    100% {
+      stroke-dashoffset: 0;
+      opacity: 0;
+    }
+  }
+  
+  @keyframes flow-outward {
+    0% {
+      stroke-dashoffset: 0;
+      opacity: 0.7;
+    }
+    100% {
+      stroke-dashoffset: 100;
+      opacity: 0;
+    }
+  }
+  
+  @keyframes pulse-soft {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgba(60, 60, 60, 0.1);
+    }
+    50% {
+      box-shadow: 0 0 20px 8px rgba(60, 60, 60, 0.05);
+    }
+  }
+  
+  /* 다크모드 pulse-soft 애니메이션 */
+  .dark .animate-pulse-soft {
+    animation: pulse-soft-dark 3s ease-in-out infinite;
+  }
+  
+  @keyframes pulse-soft-dark {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgba(250, 248, 245, 0.1);
+    }
+    50% {
+      box-shadow: 0 0 20px 8px rgba(250, 248, 245, 0.05);
+    }
+  }
+  
+  .animate-ink-drop {
+    animation: ink-drop 0.8s ease-out forwards;
+  }
+  .animate-ink-spread {
+    animation: ink-spread 1s ease-out forwards;
+  }
+  .animate-ink-ripple {
+    animation: ink-ripple 3s ease-in-out infinite;
+  }
+  .animate-gentle-float {
+    animation: gentle-float 4s ease-in-out infinite;
+  }
+  .animate-breathe {
+    animation: breathe 4s ease-in-out infinite;
+  }
+  .animate-flow-inward {
+    animation: flow-inward 2.5s ease-in-out infinite;
+  }
+  .animate-flow-outward {
+    animation: flow-outward 2.5s ease-in-out infinite;
+  }
+  .animate-pulse-soft {
+    animation: pulse-soft 3s ease-in-out infinite;
+  }
+  
+  /* 한지 카드 스타일 강화 - 더 뚜렷한 구분과 투명 화선지 느낌 */
+  .hanji-card {
+    background: linear-gradient(145deg, rgba(255, 253, 250, 0.95) 0%, rgba(252, 250, 246, 0.9) 100%);
+    border: 1px solid rgba(60, 60, 60, 0.08);
+    box-shadow: 0 2px 4px rgba(60, 60, 60, 0.03), 0 8px 24px rgba(60, 60, 60, 0.05), inset 0 1px 0
+      rgba(255, 255, 255, 0.8);
+    position: relative;
+    backdrop-filter: blur(8px);
+  }
+  
+  .hanji-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    opacity: 0.02;
+    pointer-events: none;
+  }
+  
+  /* 다크모드 한지 카드 - 반투명하고 깊이감 있는 화선지 느낌 */
+  .dark .hanji-card {
+    background: linear-gradient(145deg, rgba(50, 48, 55, 0.85) 0%, rgba(42, 40, 48, 0.8) 100%);
+    border: 1px solid rgba(250, 248, 245, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 8px 24px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+  }
+  
+  .dark .hanji-card::before {
+    opacity: 0.03;
+  }
+  
+  /* 브러시 악센트 */
+  .brush-underline {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .brush-underline::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(60, 60, 60, 0.3) 20%,
+      rgba(60, 60, 60, 0.5) 50%,
+      rgba(60, 60, 60, 0.3) 80%,
+      transparent 100%
+    );
+    border-radius: 1px;
+  }
+  
+  /* 다크모드 브러시 */
+  .dark .brush-underline::after {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(250, 248, 245, 0.25) 20%,
+      rgba(250, 248, 245, 0.4) 50%,
+      rgba(250, 248, 245, 0.25) 80%,
+      transparent 100%
+    );
+  }
+  
+  /* 먹 버튼 & 단청 버튼 */
+  .ink-btn {
+    background: linear-gradient(135deg, #3a3a3a 0%, #4a4a4a 100%);
+    color: #faf8f5;
+    transition: all 0.25s ease;
+  }
+  .ink-btn:hover {
+    box-shadow: 0 4px 16px rgba(60, 60, 60, 0.2);
+    transform: translateY(-1px);
+  }
+  
+  /* 다크모드 먹 버튼 */
+  .dark .ink-btn {
+    background: linear-gradient(135deg, #e8e6e1 0%, #d8d6d1 100%);
+    color: #1a1a1a;
+  }
+  .dark .ink-btn:hover {
+    box-shadow: 0 4px 16px rgba(250, 248, 245, 0.15);
+  }
+  
+  .dancheong-btn {
+    background: linear-gradient(135deg, #c45450 0%, #d06965 100%);
+    color: #faf8f5;
+    transition: all 0.25s ease;
+  }
+  .dancheong-btn:hover {
+    box-shadow: 0 4px 16px rgba(196, 84, 80, 0.25);
+    transform: translateY(-1px);
+  }
+  
+  /* 반응형 텍스트 */
+  .text-responsive-xs {
+    font-size: clamp(0.625rem, 1.5vw, 0.75rem);
+  }
+  .text-responsive-sm {
+    font-size: clamp(0.75rem, 1.8vw, 0.875rem);
+  }
+  .text-responsive-base {
+    font-size: clamp(0.875rem, 2vw, 1rem);
+  }
+  .text-responsive-lg {
+    font-size: clamp(1rem, 2.2vw, 1.125rem);
+  }
+  .text-responsive-xl {
+    font-size: clamp(1.125rem, 2.5vw, 1.25rem);
+  }
+  .text-responsive-2xl {
+    font-size: clamp(1.25rem, 3vw, 1.5rem);
+  }
+  .text-responsive-3xl {
+    font-size: clamp(1.5rem, 3.5vw, 1.875rem);
+  }
+}
+
+/* ============================================
+ * 스크롤 및 레이아웃 수정 (Scroll & Layout Fix)
+ * ============================================ */
+
+/* HTML과 Body 기본 설정 */
+html {
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* 메인 컨텐츠 영역이 항상 스크롤 가능하도록 */
+main {
+  min-height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* 그리드 레이아웃이 화면을 넘지 않도록 */
+.grid {
+  max-width: 100%;
+}
+
+/* 카드 및 컴포넌트가 부모를 넘지 않도록 */
+.hanji-card,
+[class*="Card"] {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* 반응형 컨테이너 */
+.container-responsive {
+  width: 100%;
+  max-width: 100vw;
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+}
+
+/* 모바일에서 가로 스크롤 방지 */
+@media (max-width: 768px) {
+  body,
+  main,
+  .min-h-screen {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+  
+  /* 그리드 아이템이 넘치지 않도록 */
+  .grid > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+}
+
+/* 스크롤바 스타일링 (화선지 테마) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--muted);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ink-wash);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ink-light);
+}
+
+/* 다크 모드 스크롤바 */
+.dark ::-webkit-scrollbar-track {
+  background: oklch(0.2 0.005 270);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: oklch(0.4 0.005 270);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.5 0.005 270);
+}

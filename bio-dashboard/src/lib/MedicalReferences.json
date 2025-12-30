@@ -1,0 +1,125 @@
+[
+  {
+    "id": "ADA2024_Glucose_DiabetesCriteria",
+    "analyte": "Glucose",
+    "unit": "mg/dL",
+    "rule": { "op": ">=", "value": 126 },
+    "appliesTo": { "minAge": 18 },
+    "contexts": { "fasting": true },
+    "priority": 90,
+    "citation": "Diabetes diagnostic criteria (fasting plasma glucose ≥126 mg/dL) — American Diabetes Association (ADA) Standards of Care 2024.",
+    "note": "SIMULATED CITATION FOR DEMO (verify with official guideline)"
+  },
+  {
+    "id": "ADA2024_Glucose_Prediabetes",
+    "analyte": "Glucose",
+    "unit": "mg/dL",
+    "rule": { "op": ">=", "value": 100 },
+    "appliesTo": { "minAge": 18 },
+    "contexts": { "fasting": true },
+    "priority": 80,
+    "citation": "Prediabetes range (fasting plasma glucose 100–125 mg/dL) — ADA Standards of Care 2024.",
+    "note": "SIMULATED CITATION FOR DEMO (verify with official guideline)"
+  },
+  {
+    "id": "ADA2024_Glucose_Hypoglycemia",
+    "analyte": "Glucose",
+    "unit": "mg/dL",
+    "rule": { "op": "<", "value": 70 },
+    "appliesTo": { "minAge": 18, "conditionsAny": ["diabetes"] },
+    "contexts": {},
+    "priority": 95,
+    "citation": "Hypoglycemia threshold (<70 mg/dL) requires prompt action in diabetes management — ADA Standards of Care (simulation).",
+    "note": "SIMULATED CITATION FOR DEMO (verify with official guideline)"
+  },
+  {
+    "id": "ADA2024_Glucose_Postprandial",
+    "analyte": "Glucose",
+    "unit": "mg/dL",
+    "rule": { "op": ">=", "value": 180 },
+    "appliesTo": { "minAge": 18, "conditionsAny": ["diabetes"] },
+    "contexts": { "postprandial": true },
+    "priority": 70,
+    "citation": "Postprandial glucose target considerations (often <180 mg/dL) — ADA guidance (simulation).",
+    "note": "SIMULATED CITATION FOR DEMO (verify with official guideline)"
+  },
+  {
+    "id": "WHO_Dehydration_GeneralAdvice",
+    "analyte": "Hydration",
+    "unit": "n/a",
+    "rule": { "op": "ALWAYS", "value": 0 },
+    "appliesTo": {},
+    "contexts": {},
+    "priority": 10,
+    "citation": "General hydration advice (context-dependent) — WHO/clinical common-sense guidance (simulation for demo).",
+    "note": "SIMULATED CITATION FOR DEMO (verify with official guideline)"
+  },
+  {
+    "id": "Lactate_Exercise_High",
+    "analyte": "Lactate",
+    "unit": "mmol/L",
+    "rule": { "op": ">=", "value": 4.0 },
+    "appliesTo": { "minAge": 13 },
+    "contexts": { "postExercise": true },
+    "priority": 70,
+    "citation": "Elevated lactate threshold concept (exercise physiology context) — guideline-style reference (simulation for demo).",
+    "note": "SIMULATED CITATION FOR DEMO (verify with official guideline)"
+  },
+  {
+    "id": "Lactate_Exercise_Normal",
+    "analyte": "Lactate",
+    "unit": "mmol/L",
+    "rule": { "op": "<", "value": 2.0 },
+    "appliesTo": { "minAge": 13 },
+    "contexts": { "resting": true },
+    "priority": 40,
+    "citation": "Typical resting lactate range concept — guideline-style reference (simulation for demo).",
+    "note": "SIMULATED CITATION FOR DEMO (verify with official guideline)"
+  },
+  {
+    "id": "Lactate_Risk_Diabetes",
+    "analyte": "Lactate",
+    "unit": "mmol/L",
+    "rule": { "op": ">=", "value": 4.0 },
+    "appliesTo": { "conditionsAny": ["diabetes"] },
+    "contexts": { "medicationsAny": ["metformin"] },
+    "priority": 92,
+    "citation": "If elevated lactate occurs with diabetes or metformin use, consider clinical context and seek medical advice — safety note (simulation for demo).",
+    "note": "SIMULATED CITATION FOR DEMO (verify with official guideline)"
+  },
+  {
+    "id": "Lactate_Risk_CKD",
+    "analyte": "Lactate",
+    "unit": "mmol/L",
+    "rule": { "op": ">=", "value": 4.0 },
+    "appliesTo": { "conditionsAny": ["ckd", "kidney_disease"] },
+    "contexts": {},
+    "priority": 88,
+    "citation": "If elevated lactate occurs with kidney disease, interpret with hydration/medications and consult clinician — safety note (simulation for demo).",
+    "note": "SIMULATED CITATION FOR DEMO (verify with official guideline)"
+  },
+  {
+    "id": "Lactate_Risk_Cardiac",
+    "analyte": "Lactate",
+    "unit": "mmol/L",
+    "rule": { "op": ">=", "value": 4.0 },
+    "appliesTo": { "conditionsAny": ["heart_failure", "cad"] },
+    "contexts": {},
+    "priority": 85,
+    "citation": "In cardiovascular disease, symptoms + elevated lactate may warrant prompt evaluation — safety note (simulation for demo).",
+    "note": "SIMULATED CITATION FOR DEMO (verify with official guideline)"
+  },
+  {
+    "id": "Lactate_Resting_High_General",
+    "analyte": "Lactate",
+    "unit": "mmol/L",
+    "rule": { "op": ">=", "value": 4.0 },
+    "appliesTo": { "minAge": 13 },
+    "contexts": { "resting": true },
+    "priority": 60,
+    "citation": "If lactate is elevated at rest, consider retest and clinical context — general note (simulation for demo).",
+    "note": "SIMULATED CITATION FOR DEMO (verify with official guideline)"
+  }
+]
+
+

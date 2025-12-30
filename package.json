@@ -1,0 +1,23 @@
+{
+  "name": "manpasik-mps-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "bio-dashboard"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=bio-dashboard",
+    "build": "npm run build --workspace=bio-dashboard",
+    "start": "npm run start --workspace=bio-dashboard",
+    "lint": "npm run lint --workspace=bio-dashboard"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
+    "framer-motion": "^12.23.26",
+    "lucide-react": "^0.562.0",
+    "react-day-picker": "^9.13.0",
+    "recharts": "^3.6.0",
+    "tailwind-merge": "^3.4.0"
+  }
+}
